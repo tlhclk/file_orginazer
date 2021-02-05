@@ -3,10 +3,9 @@ from data_base import *
 from collector import DataCollector
 
 class ToExcel:
-	excel_path = None
 	
-	def __init__(self):
-		main_path="D:\\Talha\\Masaüstü"
+	def __init__(self,main_path="D:\\Talha\\Masaüstü",excel_path=None):
+		self.excel_path=excel_path
 		dc=DataCollector(main_path)
 		self.file_list=dc.file_list
 		self.folder_list=dc.folder_list
@@ -19,7 +18,7 @@ class ToExcel:
 		
 	def get_excel_path(self):
 		if self.excel_path != None:
-			return self.excel_path
+			return "%s\\%s" % (self.main_path,self.excel_path)
 		else:
 			if self.main_path[-1]==":":
 				result= "%s\\%s_%s_%s.xls" % (self.main_path,self.parse_path(self.main_path)[2].replace(":",""),"file_structure",str(datetime.datetime.today())[:10])
@@ -39,6 +38,7 @@ class ToExcel:
 		sheet_dict={}
 		sheet_dict["folder_sht"]=self.wb0.add_sheet("Folder")
 		sheet_dict["other_sht"]=self.wb0.add_sheet("Other")
+		sheet_dict["children_sht"]=self.wb0.add_sheet("Children")
 		for fgroup in self.get_fgroup_list():
 			sheet_dict["%s_sht" % fgroup.lower()]=self.wb0.add_sheet(fgroup)
 		return sheet_dict
@@ -80,15 +80,25 @@ class ToExcel:
 					if attr_value["type"]=="variable" or attr_value["type"] == "boolean":
 						sheet.write(n,attr_value["index"],getattr(file,attr_key))
 				n+=1
+	
+	def write_children(self):
+		sheet=self.excel_sheets["children_sht"]
+		sheet.write(0, 0,"folder_id")
+		sheet.write(0, 1,"file_id")
+		sheet.write(0, 2,"is_folder")
+		n=1
+		for folder in self.folder_list:
+			for file in folder.file_list:
+				sheet.write(n,0,folder.id)
+				sheet.write(n,1,file.id)
+				sheet.write(n,2,True)
+				n+=1
 				
 	def start_flow(self):
 		self.write_folder()
 		self.write_file()
+		self.write_children()
 		self.save_excel()
 		
 	def save_excel(self):
 		self.wb0.save(self.get_excel_path())
-		
-		
-te=ToExcel()
-te.start_flow()

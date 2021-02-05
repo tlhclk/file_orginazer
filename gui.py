@@ -2,6 +2,9 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtCore import Qt
+from export_structure import ToExcel
+from similarity import Similarity
+from from_excel import FromExcel
 import sys,os
 
 
@@ -34,7 +37,7 @@ class DesktopApp(QMainWindow):
 		self.btn1.setFont(self.font2)
 		self.btn1.resize(140, 30)
 		self.btn1.setStyleSheet("background-color: white; color: green")
-		#self.btn1.clicked.connect(self.get_folder)
+		self.btn1.clicked.connect(self.get_folder)
 		self.txt1 = QtWidgets.QLineEdit(self)
 		self.txt1.resize(370, 30)
 		
@@ -48,23 +51,23 @@ class DesktopApp(QMainWindow):
 		self.btn2.setFont(self.font2)
 		self.btn2.resize(140, 30)
 		self.btn2.setStyleSheet("background-color: white; color: green")
-		#self.btn2.clicked.connect(self.get_file)
+		self.btn2.clicked.connect(self.get_file)
 		self.txt2 = QtWidgets.QLineEdit(self)
 		self.txt2.resize(370, 30)
 		
 		self.btn3 = QtWidgets.QPushButton(self)
-		self.btn3.setText("Gather All Path Info")
+		self.btn3.setText("Rename Path Info")
 		self.btn3.resize(140, 30)
 		self.btn3.setFont(self.font2)
 		self.btn3.setStyleSheet("background-color: white; color: green")
-		#self.btn3.clicked.connect(self.run_flow)
+		self.btn3.clicked.connect(self.rename_path_info)
 		
 		self.btn4 = QtWidgets.QPushButton(self)
 		self.btn4.setText("Organize The Paths")
 		self.btn4.resize(140, 30)
 		self.btn4.setFont(self.font2)
 		self.btn4.setStyleSheet("background-color: white; color: green")
-		#self.btn4.clicked.connect(self.open_folder)
+		self.btn4.clicked.connect(self.organize_the_paths)
 		
 		self.lbl5 = QtWidgets.QLabel(self)
 		self.lbl5.resize(520, 400)
@@ -85,16 +88,31 @@ class DesktopApp(QMainWindow):
 		self.btn4.move(400,180)
 		self.lbl5.move(20,220)
 	
-	def get_folder(self):
+	def get_folder(self):# open and find a folder and get path and write to textbox
 		fname = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select a Folder', os.getcwd(),
 		                                                   QtWidgets.QFileDialog.ShowDirsOnly)
+		te = ToExcel(main_path=fname, excel_path=fname.split("/")[-1]+"_organization_file.xls")
+		te.start_flow()
 		self.txt1.setText(fname)
 		self.txt2.setText(os.path.basename(fname)+"_organization_file.xls")
 	
-	def get_file(self):
+	def get_file(self):# open and find a file and get path and write to textbox
 		fname = QtWidgets.QFileDialog.getOpenFileName(self, 'Select a File', os.getcwd(), "Excel files (*.xls *.xlsx)")
+		#excel_path=self.txt1.text()+"/"+self.txt2.text()
+		excel_path = fname
+		fe = FromExcel(excel_path)
+		self.db = fe.get_excel_data()
 		self.txt2.setText(fname[0])
 		self.txt1.setText(os.path.dirname(fname[0]))
+		
+	def rename_path_info(self):# gather all path infos and write to the excel (given path)
+		# te=ToExcel(main_path=self.txt1.text(),excel_path=self.txt2.text())
+		# te.start_flow()
+		pass
+
+	def organize_the_paths(self):
+		sim=Similarity(self.db)
+		sim.get_files_similarity()
 	
 def window():
 	app = QApplication(sys.argv)

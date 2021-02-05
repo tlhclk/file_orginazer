@@ -7,12 +7,13 @@ class DataCollector:
 	folder_list=[]
 	
 	def __init__(self,main_path="D:\\Talha\\Masaüstü"):
-		fgroup_path="file_info.xls"
+		fgroup_path=os.getcwd()+"\\file_info.xls"
 		self.main_path=main_path
 		self.fgroup_dict=self.get_fgroup_dict(fgroup_path)
 		self.fgroup_class_dict={"Other":Path,"Image":Image,"Video":Video,"Music":Music,"Document":Document,"Folder":Path}
 		main_folder=self.build_main_folder()
 		self.start_flow(main_folder)
+		
 		
 	def get_fgroup_dict(self, fgroup_path):
 		fgroup_dict = {}
@@ -84,15 +85,27 @@ class DataCollector:
 	def build_file(self,parsed_data):
 		file_path="%s\\%s.%s" %(parsed_data[1],parsed_data[2],parsed_data[3])
 		if not os.path.isdir(file_path):
-			fgroup=self.get_fgroup(parsed_data[3])
+			ftype=parsed_data[3].lower()
+			fgroup=self.get_fgroup(ftype)
 			file=self.fgroup_class_dict[fgroup]()
 			file.is_folder=parsed_data[0]
 			file.parent_folder=parsed_data[1]
 			file.name=parsed_data[2]
 			file.id=len(self.file_list)+len(self.folder_list)+1
-			file.ftype=parsed_data[3]
+			file.ftype=ftype
 			file.fgroup=fgroup
 			file.size=os.path.getsize(file_path)
+			file_stats=os.stat(file_path)
+			f_mode=file_stats.st_mode
+			f_size=file_stats.st_size
+			f_atime=file_stats.st_atime
+			f_mtime=file_stats.st_mtime
+			f_ctime=file_stats.st_ctime
+			file.fmode=f_mode
+			file.fsize=f_size
+			file.fatime=datetime.datetime.utcfromtimestamp(f_atime).strftime("%d-%m-%Y %H:%M:%S")
+			file.fmtime=datetime.datetime.utcfromtimestamp(f_mtime).strftime("%d-%m-%Y %H:%M:%S")
+			file.fctime=datetime.datetime.utcfromtimestamp(f_ctime).strftime("%d-%m-%Y %H:%M:%S")
 			return file
 		else:
 			return None

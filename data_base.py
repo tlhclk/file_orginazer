@@ -69,18 +69,25 @@ class Path:
 		
 # For File
 class File(Path):
-	size = None
 	ftype = None
 	fgroup = None
+	fmode = None
+	fsize = None
+	fatime = None
+	fmtime = None
+	fctime = None
 	is_folder = False
 	file_attr_dict = {
-		"size": {"index": 6, "title": "Dosya Boyutu", "str": None,"type":"variable"},
-		"ftype": {"index": 7, "title": "Dosya Türü", "str": ".%s","type":"variable"},
-		"fgroup": {"index": 8, "title": "Dosya Grubu", "str": None,"type":"variable"},
+		"ftype": {"index": 6, "title": "Dosya Türü", "str": ".%s","type":"variable"},
+		"fmode": {"index": 7, "title": "Dosya Kodu", "str": None,"type":"variable"},
+		"fsize": {"index": 8, "title": "Dosya Boyutu2", "str": None,"type":"variable"},
+		"fatime": {"index": 9, "title": "Dosyaya Erişim Zamanı", "str": None,"type":"variable"},
+		"fmtime": {"index": 10, "title": "Dosya Değiştirme Zamanı", "str": None,"type":"variable"},
+		"fctime": {"index": 11, "title": "Dosya Oluşturma Zamanı", "str": None,"type":"variable"},
 	}
 	
 	def get_size(self):
-		return self.size
+		return self.fsize
 	
 	def get_attr_dict(self):
 		return {**self.attr_dict,**self.file_attr_dict}
@@ -109,12 +116,12 @@ class Video(File):
 	year=None
 	desc=None
 	video_attr_dict = {
-		"second_name": {"index": 9, "title": "İkinci Ad", "str": None,"type":"variable"},
-		"season": {"index": 10, "title": "Sezon", "str": None,"type":"variable"},
-		"episode": {"index": 11, "title": "Bölüm", "str": None,"type":"variable"},
-		"quality": {"index": 12, "title": "Kalite", "str": None,"type":"variable"},
-		"year": {"index": 13, "title": "Yıl", "str": None,"type":"variable"},
-		"desc": {"index": 14, "title": "Açıklama", "str": None,"type":"variable"},
+		"second_name": {"index": 12, "title": "İkinci Ad", "str": None,"type":"variable"},
+		"season": {"index": 13, "title": "Sezon", "str": None,"type":"variable"},
+		"episode": {"index": 14, "title": "Bölüm", "str": None,"type":"variable"},
+		"quality": {"index": 15, "title": "Kalite", "str": None,"type":"variable"},
+		"year": {"index": 16, "title": "Yıl", "str": None,"type":"variable"},
+		"desc": {"index": 17, "title": "Açıklama", "str": None,"type":"variable"},
 	}
 
 	def get_attr_dict(self):
@@ -148,11 +155,11 @@ class Music(File):
 	year=None
 	desc=None
 	music_attr_dict = {
-		"second_name": {"index": 9, "title": "İkinci Ad", "str": None,"type":"variable"},
-		"singer": {"index": 10, "title": "Şarkıcı", "str": None,"type":"variable"},
-		"album": {"index": 11, "title": "Albüm", "str": None,"type":"variable"},
-		"year": {"index": 12, "title": "Yıl", "str": None,"type":"variable"},
-		"desc": {"index": 13, "title": "Açıklama", "str": None,"type":"variable"},
+		"second_name": {"index": 12, "title": "İkinci Ad", "str": None,"type":"variable"},
+		"singer": {"index": 13, "title": "Şarkıcı", "str": None,"type":"variable"},
+		"album": {"index": 14, "title": "Albüm", "str": None,"type":"variable"},
+		"year": {"index": 15, "title": "Yıl", "str": None,"type":"variable"},
+		"desc": {"index": 16, "title": "Açıklama", "str": None,"type":"variable"},
 	}
 
 	def get_attr_dict(self):
@@ -182,10 +189,10 @@ class Image(File):
 	year=None
 	desc=None
 	image_attr_dict = {
-		"second_name": {"index": 9, "title": "İkinci Ad", "str": None, "type": "variable"},
-		"month": {"index": 10, "title": "Ay", "str": None, "type": "variable"},
-		"year": {"index": 11, "title": "Yıl", "str": None, "type": "variable"},
-		"desc": {"index": 12, "title": "Açıklama", "str": None, "type": "variable"},
+		"second_name": {"index": 12, "title": "İkinci Ad", "str": None, "type": "variable"},
+		"month": {"index": 13, "title": "Ay", "str": None, "type": "variable"},
+		"year": {"index": 14, "title": "Yıl", "str": None, "type": "variable"},
+		"desc": {"index": 15, "title": "Açıklama", "str": None, "type": "variable"},
 	}
 
 	def get_attr_dict(self):
@@ -213,8 +220,9 @@ class Document(File):
 	}
 
 	def get_attr_dict(self):
-		attr_dict=super(Document, self).get_attr_dict()
-		return {**attr_dict,**self.document_attr_dict}
+		#attr_dict=super(Document, self).get_attr_dict()
+		#return {**attr_dict,**self.document_attr_dict}
+		return {**self.attr_dict,**self.file_attr_dict,**self.document_attr_dict}
 	
 	def get_name(self):
 		if self.new_name!=None and self.new_name!="":
